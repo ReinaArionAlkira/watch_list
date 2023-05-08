@@ -25,9 +25,19 @@ class _MainAppState extends State<MainApp> {
       value: AuthService().user,
       initialData: null,
       child: MaterialApp(
-        home: Wrapper(),
+        home: const Wrapper(),
         theme: ThemeData(
           primarySwatch: Colors.brown,
+          inputDecorationTheme: const InputDecorationTheme(
+            fillColor: Colors.white,
+            filled: true,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.pink, width: 2.0),
+            ),
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
