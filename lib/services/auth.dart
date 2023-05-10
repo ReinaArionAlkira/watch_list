@@ -1,6 +1,7 @@
 import "dart:async";
 
 import "package:firebase_auth/firebase_auth.dart";
+import "package:watch_list/services/database.dart";
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,6 +30,7 @@ class AuthService {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
+      await DatabaseService(uid: user!.uid).();
       return user;
     } catch (e) {
       print(e.toString());
