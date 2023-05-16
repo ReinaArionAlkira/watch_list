@@ -5,6 +5,14 @@ import "package:watch_list/services/database.dart";
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // data
+  String getUid() {
+    final User user = _auth.currentUser!;
+    final uid = user.uid;
+    return uid;
+  }
+
   // auth change user stream
   Stream<User?> get user async* {
     final User? initialUser = await _auth.authStateChanges().first;
@@ -30,7 +38,7 @@ class AuthService {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      await DatabaseService(uid: user!.uid).();
+      // print("Tak:  ${DatabaseService(uid: user!.uid).uid}");
       return user;
     } catch (e) {
       print(e.toString());
