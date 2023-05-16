@@ -1,5 +1,8 @@
 import "package:flutter/material.dart";
 import "package:watch_list/services/auth.dart";
+import "package:watch_list/services/database.dart";
+
+import "../add_dialog.dart";
 
 class Home extends StatelessWidget {
   Home({super.key});
@@ -8,6 +11,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final uid = _auth.getUid();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Hello"),
@@ -21,6 +25,12 @@ class Home extends StatelessWidget {
           )
         ],
       ),
+      body: FilledButton.icon(
+          onPressed: () {
+            AddDialog();
+          },
+          icon: const Icon(Icons.add),
+          label: const Text("Add movie")),
     );
   }
 }
