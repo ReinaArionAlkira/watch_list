@@ -33,9 +33,21 @@ class DatabaseService {
     var data = await usersCollection
         .doc(uid)
         .collection("movies")
-        .where("status", isEqualTo: status)
+        .where("status", isEqualTo: status.value)
         .get();
     return data.docs.map((e) => MovieData.fromMap(e.data(), e.id)).toList();
+  }
+
+  Stream<List<MovieData>> listByStatusListen(MovieStatus status) async* {
+    var stream = usersCollection
+        .doc(uid)
+        .collection("movies")
+        .where("status", isEqualTo: status.value)
+        .snapshots();
+
+    await for (final data in stream) {
+      yield data.docs.map((e) => MovieData.fromMap(e.data(), e.id)).toList();
+    }
   }
 
   // update
