@@ -4,6 +4,8 @@ import "package:watch_list/screens/movies_screen.dart";
 import "package:watch_list/services/auth.dart";
 import "package:watch_list/services/database.dart";
 
+import "../add_dialog.dart";
+
 class Home extends StatelessWidget {
   Home({super.key});
 
