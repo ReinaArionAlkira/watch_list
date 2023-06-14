@@ -1,29 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:watch_list/services/database.dart';
-import '../shared/movie_data.dart';
+import 'package:watch_list/shared/movie_data.dart';
 
-class AddDialog extends StatefulWidget {
-  AddDialog(
+class EditDialog extends StatefulWidget {
+  final String uid;
+  final MovieData movieData;
+  final List<List<MovieData>> movies;
+
+  const EditDialog(
       {Key? key,
       required this.uid,
-      required this.onMovieAdded,
+      required this.movieData,
       required this.movies})
       : super(key: key);
 
-  final List<List<MovieData>> movies;
-  final String uid;
-  final Future<void> Function() onMovieAdded;
-
   @override
-  _AddDialogState createState() => _AddDialogState();
+  _EditDialogState createState() => _EditDialogState();
 }
 
-class _AddDialogState extends State<AddDialog> {
-  final TextEditingController _titleController = TextEditingController();
-  MovieStatus _selectedStatus = MovieStatus.planned;
-  int _selectedScore = 0;
+class _EditDialogState extends State<EditDialog> {
+  late TextEditingController _titleController;
+  late MovieStatus _selectedStatus;
+  late int _selectedScore;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.movieData.title);
+    _selectedStatus = widget.movieData.status;
+    _selectedScore = widget.movieData.score;
+  }
 
   @override
   void dispose() {
@@ -36,8 +43,11 @@ class _AddDialogState extends State<AddDialog> {
       return 'Please enter a title';
     }
 
-    if (movies
-        .any((movie) => movie.title.toLowerCase() == value.toLowerCase())) {
+    // Exclude the current movie being edited from the duplicate title check
+    final editedMovieId = widget.movieData.id;
+    if (movies.any((movie) =>
+        movie.title.toLowerCase() == value.toLowerCase() &&
+        movie.id != editedMovieId)) {
       return 'A movie with this title already exists';
     }
 
@@ -47,20 +57,18 @@ class _AddDialogState extends State<AddDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Movie'),
+      title: Text('Edit Movie'),
       content: SingleChildScrollView(
-        // Wrap the content in SingleChildScrollView
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-                validator: (value) => _validateTitle(value,
-                    widget.movies[0] + widget.movies[1] + widget.movies[2]),
-              ),
+                  controller: _titleController,
+                  decoration: const InputDecoration(labelText: 'Title'),
+                  validator: (value) => _validateTitle(value,
+                      widget.movies[0] + widget.movies[1] + widget.movies[2])),
               const SizedBox(height: 16),
               DropdownButtonFormField<int>(
                 value: _selectedScore,
@@ -71,12 +79,13 @@ class _AddDialogState extends State<AddDialog> {
                     });
                   }
                 },
-                items: List.generate(11, (index) {
+                items: List.generate(11, (index) => index)
+                    .map<DropdownMenuItem<int>>((int score) {
                   return DropdownMenuItem<int>(
-                    value: index,
-                    child: Text((index).toString()),
+                    value: score,
+                    child: Text(score.toString()),
                   );
-                }),
+                }).toList(),
                 decoration: const InputDecoration(labelText: 'Score'),
               ),
               const SizedBox(height: 16),
@@ -89,7 +98,8 @@ class _AddDialogState extends State<AddDialog> {
                     });
                   }
                 },
-                items: MovieStatus.values.map((status) {
+                items: MovieStatus.values
+                    .map<DropdownMenuItem<MovieStatus>>((status) {
                   return DropdownMenuItem<MovieStatus>(
                     value: status,
                     child: Text(status.toString().split('.').last),
@@ -107,22 +117,17 @@ class _AddDialogState extends State<AddDialog> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: () async {
+          onPressed: () {
             if (_formKey.currentState!.validate()) {
-              final databaseService = DatabaseService(uid: widget.uid);
-              final String title = _titleController.text.trim();
-              final MovieData movieData = MovieData(
-                title: title,
+              final editedMovie = MovieData(
+                title: _titleController.text.trim(),
                 status: _selectedStatus,
                 score: _selectedScore,
               );
-
-              Navigator.of(context).pop();
-              await databaseService.addMovie(movieData);
-              await widget.onMovieAdded();
+              Navigator.of(context).pop(editedMovie);
             }
           },
-          child: const Text('Add'),
+          child: const Text('Save'),
         ),
       ],
     );

@@ -22,30 +22,29 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<User?>.value(
-      value: AuthService().user,
-      initialData: null,
-      child: MaterialApp(
-        home: const Wrapper(),
-        theme: ThemeData(
-          primarySwatch: Colors.brown,
-          inputDecorationTheme: const InputDecorationTheme(
-            fillColor: Colors.white,
-            filled: true,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white, width: 2.0),
+        value: AuthService().user,
+        initialData: null,
+        child: MaterialApp(
+          home: const Wrapper(),
+          theme: ThemeData(
+            primarySwatch: Colors.brown,
+            inputDecorationTheme: const InputDecorationTheme(
+              fillColor: Colors.white,
+              filled: true,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 2.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.pink, width: 2.0),
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.pink, width: 2.0),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Colors.brown), // kolor przycisku
+              ),
             ),
           ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                  Colors.brown), // kolor przycisku
-            ),
-          ),
-        ),
-      ),
-    );
+        ));
   }
 }

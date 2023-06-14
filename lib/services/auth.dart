@@ -1,7 +1,6 @@
 import "dart:async";
 
 import "package:firebase_auth/firebase_auth.dart";
-import "package:watch_list/services/database.dart";
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -21,16 +20,16 @@ class AuthService {
   }
 
   // sign in anonimous
-  Future signInAnom() async {
-    try {
-      UserCredential result = await _auth.signInAnonymously();
-      User? user = result.user;
-      return user;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+  // Future signInAnom() async {
+  //   try {
+  //     UserCredential result = await _auth.signInAnonymously();
+  //     User? user = result.user;
+  //     return user;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
 
   // sign in with email & pass
   Future signInWithEmailAndPass(String email, String password) async {

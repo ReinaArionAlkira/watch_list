@@ -26,15 +26,29 @@ class DatabaseService {
         .delete();
   }
 
-  // search
+  Future<void> deleteAllMovies() async {
+    try {
+      QuerySnapshot snapshot =
+          await usersCollection.doc(uid).collection("movies").get();
+
+      for (DocumentSnapshot doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+      print('Document deleted successfully');
+    } catch (e) {
+      print('Error deleting document: $e');
+    }
+  }
 
   // list by status
-  Future<List<MovieData>> listByStatus(MovieStatus status) async {
+  Future<List<MovieData>> listByStatus(String status) async {
     var data = await usersCollection
         .doc(uid)
         .collection("movies")
         .where("status", isEqualTo: status)
         .get();
+    print(
+        "Staaaaaaaaaaaaaaaaaaaaaaa${data.docs.map((e) => MovieData.fromMap(e.data(), e.id)).toList()}");
     return data.docs.map((e) => MovieData.fromMap(e.data(), e.id)).toList();
   }
 
